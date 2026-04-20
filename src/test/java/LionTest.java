@@ -1,13 +1,11 @@
 import com.example.Feline;
 import com.example.Lion;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -19,23 +17,9 @@ public class LionTest {
     @Mock
     Feline feline;
 
-    @Before
-    public void setUp() throws Exception {
-        Field field = Lion.class.getDeclaredField("feline");
-        field.setAccessible(true);
-    }
-
-    private void injectMock(Lion lion, Feline mock) throws Exception {
-        Field field = Lion.class.getDeclaredField("feline");
-        field.setAccessible(true);
-        field.set(lion, mock);
-    }
-
     @Test
     public void getKittensTest() throws Exception {
-        Lion lion = new Lion("Самка");
-        injectMock(lion, feline);
-
+        Lion lion = new Lion("Самка", feline);
         Mockito.when(feline.getKittens()).thenReturn(3);
 
         int actual = lion.getKittens();
@@ -47,8 +31,7 @@ public class LionTest {
 
     @Test
     public void getFoodTest() throws Exception {
-        Lion lion = new Lion("Самец");
-        injectMock(lion, feline);
+        Lion lion = new Lion("Самец", feline);
 
         List<String> expectedFood = List.of("Животные", "Птицы", "Рыба");
         Mockito.when(feline.getFood("Хищник")).thenReturn(expectedFood);
@@ -61,7 +44,7 @@ public class LionTest {
 
     @Test
     public void doesHaveManeMaleTest() throws Exception {
-        Lion lion = new Lion("Самец");
+        Lion lion = new Lion("Самец", null);
         boolean expected = true;
         boolean actual = lion.doesHaveMane();
         assertEquals("У самца должна быть грива", expected, actual);
@@ -69,7 +52,7 @@ public class LionTest {
 
     @Test
     public void doesHaveManeFemaleTest() throws Exception {
-        Lion lion = new Lion("Самка");
+        Lion lion = new Lion("Самка", null);
         boolean expected = false;
         boolean actual = lion.doesHaveMane();
         assertEquals("У самки не должно быть гривы", expected, actual);
@@ -78,9 +61,9 @@ public class LionTest {
     @Test
     public void constructorThrowsExceptionForInvalidSexTest() {
         Exception exception = assertThrows(Exception.class, () -> {
-            new Lion("Котик");
+            new Lion("Котик", null);
         });
-        String expectedMessage = "Используйте допустимые значения пола животного - самей или самка";
+        String expectedMessage = "Используйте допустимые значения пола животного - самец или самка";
         assertEquals("Должно быть исключение для неверного пола", expectedMessage, exception.getMessage());
     }
 }

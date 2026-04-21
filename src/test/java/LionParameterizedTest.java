@@ -1,13 +1,20 @@
+import com.example.Feline;
 import com.example.Lion;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 @RunWith(Parameterized.class)
 public class LionParameterizedTest {
+
     String sex;
     boolean hasMane;
+
+    @Mock
+    Feline feline;
 
     public LionParameterizedTest(String sex, boolean hasMane) {
         this.sex = sex;
@@ -24,7 +31,9 @@ public class LionParameterizedTest {
 
     @Test
     public void haveMane() throws Exception {
-        Lion lion = new Lion(sex, null);
+
+        MockitoAnnotations.openMocks(this);
+        Lion lion = new Lion(sex, feline);
         Assert.assertEquals(hasMane, lion.doesHaveMane());
     }
 }
